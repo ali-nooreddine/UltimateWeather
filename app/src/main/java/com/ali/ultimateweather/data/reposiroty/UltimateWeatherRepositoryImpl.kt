@@ -30,6 +30,9 @@ class UltimateWeatherRepositoryImpl(
     }
 
     private suspend fun initWeatherData() {
+        // TODO to be changed just for testing
+        if (shouldFetch(ZonedDateTime.now().minusHours(1)))
+            fetchCurrentWeather()
 
     }
 
@@ -40,7 +43,7 @@ class UltimateWeatherRepositoryImpl(
         //
     }
 
-    private fun isFetchedCurrentNeeded(lastFetchTime:ZonedDateTime):Boolean{
+    private fun shouldFetch(lastFetchTime: ZonedDateTime): Boolean {
         val thirtyMinuteAgo = ZonedDateTime.now().minusMinutes(30)
         return lastFetchTime.isBefore(thirtyMinuteAgo)
     }

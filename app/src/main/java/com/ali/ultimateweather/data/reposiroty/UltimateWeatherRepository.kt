@@ -7,5 +7,5 @@ import com.ali.ultimateweather.data.db.entity.CurrentWeatherEntry
  * Created by Ali Noureddine on 12/11/2019.
  */
 interface UltimateWeatherRepository {
-    suspend fun getCurrentWeather(metric:Boolean): LiveData<CurrentWeatherEntry>
+    suspend fun getCurrentWeather(units: String): LiveData<CurrentWeatherEntry>
 }
