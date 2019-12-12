@@ -25,14 +25,14 @@ abstract class WeatherDatabase:RoomDatabase() {
         // to make sure no 2 threads are doing the same things
         private val LOCK = Any()
 
-        operator fun invoke(context: Context) = instance?: synchronized(LOCK){
-            instance?: buildDatabase(context)
+        operator fun invoke(context: Context) = instance ?: synchronized(LOCK) {
+            instance ?: buildDatabase(context).also { instance = it }
         }
 
-        private fun buildDatabase(context: Context){
+        private fun buildDatabase(context: Context) =
             Room.databaseBuilder(context.applicationContext,
-                WeatherDatabase::class.java,"weather.db").build().also { instance = it }
-        }
-
+                WeatherDatabase::class.java, "weather.db"
+            )
+                .build()
     }
 }
