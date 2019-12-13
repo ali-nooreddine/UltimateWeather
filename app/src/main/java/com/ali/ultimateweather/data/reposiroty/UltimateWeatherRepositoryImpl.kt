@@ -22,25 +22,24 @@ class UltimateWeatherRepositoryImpl(
         }
     }
 
-    override suspend fun getCurrentWeather(units: String): LiveData<CurrentWeatherEntry> {
+    override suspend fun getCurrentWeather(unit: String): LiveData<CurrentWeatherEntry> {
         return withContext(Dispatchers.IO){
-            initWeatherData()
+            initWeatherData(unit)
             return@withContext currentWeatherDao.getWeatherEntry()
         }
     }
 
-    private suspend fun initWeatherData() {
+    private suspend fun initWeatherData(unit: String) {
         // TODO to be changed just for testing
-        if (shouldFetch(ZonedDateTime.now().minusHours(1)))
-            fetchCurrentWeather()
+        if (shouldFetch(ZonedDateTime.now()))
+            fetchCurrentWeather(unit)
 
     }
 
-    private suspend fun fetchCurrentWeather(){
+    private suspend fun fetchCurrentWeather(unit: String){
         //TODO to be implemented
-        weatherNetworkDataSource.fetchCurrentWeather("Beirut","m")
+        weatherNetworkDataSource.fetchCurrentWeather("Beirut",unit)
         // after fetch: response is persisted into the data because we are observing forever the downloaded current weather
-        //
     }
 
     private fun shouldFetch(lastFetchTime: ZonedDateTime): Boolean {

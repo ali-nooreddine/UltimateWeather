@@ -3,6 +3,8 @@ package com.ali.ultimateweather
 import android.app.Application
 import com.ali.ultimateweather.data.db.WeatherDatabase
 import com.ali.ultimateweather.data.network.*
+import com.ali.ultimateweather.data.provider.UnitProvider
+import com.ali.ultimateweather.data.provider.UnitProviderImpl
 import com.ali.ultimateweather.data.reposiroty.UltimateWeatherRepository
 import com.ali.ultimateweather.data.reposiroty.UltimateWeatherRepositoryImpl
 import com.ali.ultimateweather.ui.weather.current.CurrentWeatherViewModelFactory
@@ -33,8 +35,8 @@ class UltimateWeatherApplication : Application(), KodeinAware {
                 instance()
             )
         }
-
-        bind() from provider { CurrentWeatherViewModelFactory(instance()) }
+        bind<UnitProvider>() with singleton { UnitProviderImpl(instance()) }
+        bind() from provider { CurrentWeatherViewModelFactory(instance(), instance()) }
     }
 
     override fun onCreate() {

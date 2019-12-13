@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.ali.ultimateweather.R
 import com.ali.ultimateweather.internal.UnitSystem
+import com.ali.ultimateweather.internal.glide.GlideApp
 import com.ali.ultimateweather.ui.base.ScopedFragment
 import kotlinx.android.synthetic.main.current_weather_fragment.*
 import kotlinx.coroutines.launch
@@ -63,11 +64,14 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
                 updatePrecipitation(it.precip)
                 updateWind(it.windDir, it.windSpeed)
                 updateVisibility(it.visibility)
+                GlideApp.with(this@CurrentWeatherFragment)
+                    .load(it.weatherIcons.get(0))
+                    .into(im_condition_icon)
             })
     }
 
     private fun chooseLocalizedUnitAbbreviation(metric: String, imperial: String): String {
-        return if (viewModel.unit.equals(UnitSystem.METRIC.name)) metric else imperial
+        return if (viewModel.selectedUnit.equals(UnitSystem.METRIC.name)) metric else imperial
     }
 
     private fun updateLocation(location: String) {
