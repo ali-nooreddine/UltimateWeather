@@ -14,7 +14,7 @@ class CurrentWeatherViewModel (
 
     //TODO get unit from settings
     val selectedUnit: String
-        get() = unitSystem.name
+        get() = unitSystem.code
 
     val weather by lazyDeferred {
         weatherRepository.getCurrentWeather(selectedUnit)

@@ -1,6 +1,7 @@
 package com.ali.ultimateweather
 
 import android.app.Application
+import androidx.preference.PreferenceManager
 import com.ali.ultimateweather.data.db.WeatherDatabase
 import com.ali.ultimateweather.data.network.*
 import com.ali.ultimateweather.data.provider.UnitProvider
@@ -42,6 +43,7 @@ class UltimateWeatherApplication : Application(), KodeinAware {
     override fun onCreate() {
         super.onCreate()
         AndroidThreeTen.init(this)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
     }
 
 }

@@ -31,14 +31,14 @@ class UltimateWeatherRepositoryImpl(
 
     private suspend fun initWeatherData(unit: String) {
         // TODO to be changed just for testing
-        if (shouldFetch(ZonedDateTime.now()))
+//        if (shouldFetch(ZonedDateTime.now()))
             fetchCurrentWeather(unit)
 
     }
 
     private suspend fun fetchCurrentWeather(unit: String){
         //TODO to be implemented
-        weatherNetworkDataSource.fetchCurrentWeather("Beirut",unit)
+        weatherNetworkDataSource.fetchCurrentWeather("Beirut", unit)
         // after fetch: response is persisted into the data because we are observing forever the downloaded current weather
     }
 

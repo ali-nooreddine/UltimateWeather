@@ -22,7 +22,7 @@ class WeatherNetworkDataSourceImpl(
     override suspend fun fetchCurrentWeather(location: String, units:String) {
         try{
             val fetchedCurrentWeather = weatherStackApiService
-                .getCurrentWeather(location,units)
+                .getCurrentWeather(location, units)
                 .await()
             _downloadedCurrentWeather.postValue(fetchedCurrentWeather)
         }catch (e:NoConnectivityException){

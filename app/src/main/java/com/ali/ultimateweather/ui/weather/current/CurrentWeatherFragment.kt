@@ -71,7 +71,7 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     }
 
     private fun chooseLocalizedUnitAbbreviation(metric: String, imperial: String): String {
-        return if (viewModel.selectedUnit.equals(UnitSystem.METRIC.name)) metric else imperial
+        return if (viewModel.selectedUnit.equals(UnitSystem.METRIC.code)) metric else imperial
     }
 
     private fun updateLocation(location: String) {
