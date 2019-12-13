@@ -94,14 +94,12 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     }
 
     private fun updateWind(windDirection: String, windSpeed: Double) {
-        //TODO to be changed based on selected unit
-        val unitAbbreviation = "kph"
+        val unitAbbreviation = chooseLocalizedUnitAbbreviation("kph", "mph")
         tv_wind.text = "Wind: $windDirection, $windSpeed $unitAbbreviation"
     }
 
     private fun updateVisibility(visibilityDistance: Double) {
-        //TODO to be changed based on selected unit
-        val unitAbbreviation = "km"
+        val unitAbbreviation = chooseLocalizedUnitAbbreviation("km", "mi")
         tv_visibility.text = "Visibility: $visibilityDistance $unitAbbreviation"
     }
  }
