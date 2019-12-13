@@ -8,9 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.ali.ultimateweather.R
+import com.ali.ultimateweather.internal.UnitSystem
 import com.ali.ultimateweather.ui.base.ScopedFragment
 import kotlinx.android.synthetic.main.current_weather_fragment.*
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.kodein.di.KodeinAware
 import org.kodein.di.android.x.closestKodein
@@ -18,7 +18,16 @@ import org.kodein.di.generic.instance
 
 class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     override val kodein by closestKodein()
+    /*Why we created viewModelFactory
+    * viewModel are only to preserve state (screen rotation, configuration changes
+    * and because it is not destroyed, Also views pass through a life cycle and we
+    * cannot create a new instance of viewModel from inside any view instead,we need
+    * to initiate viewModel when the view is first launched only, then on subsequent
+    * launching after destroy then re-create we need to get the already initiated
+    * viewModel, so that would happen through a viewModelFactory that save the instance of viewModel for us
+    * */
     private val viewModelFactory: CurrentWeatherViewModelFactory by instance()
+
     private lateinit var viewModel: CurrentWeatherViewModel
 
     override fun onCreateView(
@@ -33,28 +42,21 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
 
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(CurrentWeatherViewModel::class.java)
+
         bindUI()
 
-//        TODO to be changed to DI: ConnectivityInterceptorImpl(this.context!!)
-//        val apiService = WeatherStackApiService(ConnectivityInterceptorImpl(this.context!!))
-//        val weatherNetworkDataSource = WeatherNetworkDataSourceImpl(apiService)
-//
-//        weatherNetworkDataSource.downloadedCurrentWeather.observe(this, Observer {
-//            group_loading.visibility = View.GONE
-//            tv_feels_like_temperature.text = it.toString()
-//        })
-//
-//        //TODO to be changed later on
-//        GlobalScope.launch(Dispatchers.Main) {
-//            weatherNetworkDataSource.fetchCurrentWeather("beirut","m");
-//        }
     }
+
+    /*we could directly call launch (without GlobalScope.launch) because our fragment is an instance
+    of ScopedFragment which is instance of CoroutineScope
+    */
 
     private fun bindUI() = launch {
             val currentWeather = viewModel.weather.await()
             currentWeather.observe(this@CurrentWeatherFragment, Observer {
-                if (it == null) return@Observer
+                if (it == null) return@Observer // first launch "it" comes from db and we don't have it so we add the check and the return
                 group_loading.visibility = View.GONE
+                updateLocation("Beirut")
                 updateDateToToday()
                 updateTemperatures(it.temperature, it.feelslike)
                 updateCondition(it.weatherDescriptions.get(0))
@@ -64,13 +66,20 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
             })
     }
 
+    private fun chooseLocalizedUnitAbbreviation(metric: String, imperial: String): String {
+        return if (viewModel.unit.equals(UnitSystem.METRIC.name)) metric else imperial
+    }
+
+    private fun updateLocation(location: String) {
+        (activity as? AppCompatActivity)?.supportActionBar?.title = location
+    }
+
     private fun updateDateToToday() {
         (activity as? AppCompatActivity)?.supportActionBar?.subtitle = "Today"
     }
 
     private fun updateTemperatures(temperature: Double, feelsLike: Double) {
-        //TODO to be changed based on selected unit
-        val unitAbbreviation = "°C"
+        val unitAbbreviation = chooseLocalizedUnitAbbreviation("°C", "°F")
         tv_temperature.text = "$temperature$unitAbbreviation"
         tv_feels_like_temperature.text = "Feels like $feelsLike$unitAbbreviation"
     }
@@ -80,9 +89,8 @@ class CurrentWeatherFragment : ScopedFragment(), KodeinAware {
     }
 
     private fun updatePrecipitation(precipitationVolume: Double) {
-        //TODO to be changed based on selected unit
-        val unitAbbreviation = "mm"
-        tv_precipitation.text = "Preciptiation: $precipitationVolume $unitAbbreviation"
+        val unitAbbreviation = chooseLocalizedUnitAbbreviation("mm", "in")
+        tv_precipitation.text = "Precipitation: $precipitationVolume $unitAbbreviation"
     }
 
     private fun updateWind(windDirection: String, windSpeed: Double) {

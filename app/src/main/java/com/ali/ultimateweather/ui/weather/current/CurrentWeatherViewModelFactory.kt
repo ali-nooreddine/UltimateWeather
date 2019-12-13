@@ -15,4 +15,5 @@ class CurrentWeatherViewModelFactory(
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return CurrentWeatherViewModel(weatherRepository) as T
     }
+
 }
