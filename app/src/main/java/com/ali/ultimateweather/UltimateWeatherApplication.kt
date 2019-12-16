@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.preference.PreferenceManager
 import com.ali.ultimateweather.data.db.WeatherDatabase
 import com.ali.ultimateweather.data.network.*
+import com.ali.ultimateweather.data.provider.LocationProvider
+import com.ali.ultimateweather.data.provider.LocationProviderImpl
 import com.ali.ultimateweather.data.provider.UnitProvider
 import com.ali.ultimateweather.data.provider.UnitProviderImpl
 import com.ali.ultimateweather.data.reposiroty.UltimateWeatherRepository
@@ -26,12 +28,16 @@ class UltimateWeatherApplication : Application(), KodeinAware {
         import(androidXModule(this@UltimateWeatherApplication))
         bind() from singleton { WeatherDatabase(instance()) }
         bind() from singleton { instance<WeatherDatabase>().currentWeatherDao() }
+        bind() from singleton { instance<WeatherDatabase>().weatherLocationDao() }
 
         bind<ConnectivityInterceptor>() with singleton { ConnectivityInterceptorImpl(instance()) }
         bind() from singleton { WeatherStackApiService(instance()) }
         bind<WeatherNetworkDataSource>() with singleton { WeatherNetworkDataSourceImpl(instance()) }
+        bind<LocationProvider>() with singleton { LocationProviderImpl() }
         bind<UltimateWeatherRepository>() with singleton {
             UltimateWeatherRepositoryImpl(
+                instance(),
+                instance(),
                 instance(),
                 instance()
             )

@@ -7,18 +7,21 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.ali.ultimateweather.data.db.entity.CurrentWeatherEntry
 import com.ali.ultimateweather.data.db.entity.PersistentConverter
+import com.ali.ultimateweather.data.db.entity.WeatherLocation
 
 /**
  * Created by Ali Noureddine on 12/11/2019.
  */
 @Database(
-    entities = [CurrentWeatherEntry::class],
+    entities = [CurrentWeatherEntry::class, WeatherLocation::class],
     version = 1
 )
 @TypeConverters(PersistentConverter::class)
 abstract class WeatherDatabase:RoomDatabase() {
 
     abstract fun currentWeatherDao():CurrentWeatherDao
+
+    abstract fun weatherLocationDao(): WeatherLocationDao
 
     companion object {
         @Volatile private var instance:WeatherDatabase?=null
