@@ -12,7 +12,7 @@
 
         <EditTextPreference
             android:defaultValue="Beirut"
-            android:dependency="USE_DEVICE_LOCATION"
+            android:dependency="CUSTOM_LOCATION"
             android:key="CUSTOM_LOCATION"
             android:summary="The location for which the weather is displayed"
             android:title="Location" />

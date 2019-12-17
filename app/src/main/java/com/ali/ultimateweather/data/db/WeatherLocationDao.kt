@@ -15,7 +15,7 @@ import com.ali.ultimateweather.data.db.entity.WeatherLocation
 interface WeatherLocationDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun upsert(weatherLocation: WeatherLocation)
+    fun upsert(weatherLocation: WeatherLocation):Long
 
     @Query("select * from weather_location where id = $WEATHER_LOCATION_ID")
     fun getLocation(): LiveData<WeatherLocation>

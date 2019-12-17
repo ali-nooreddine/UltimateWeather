@@ -1,6 +1,7 @@
 package com.ali.ultimateweather
 
 import android.app.Application
+import android.content.Context
 import androidx.preference.PreferenceManager
 import com.ali.ultimateweather.data.db.WeatherDatabase
 import com.ali.ultimateweather.data.network.*
@@ -11,6 +12,7 @@ import com.ali.ultimateweather.data.provider.UnitProviderImpl
 import com.ali.ultimateweather.data.reposiroty.UltimateWeatherRepository
 import com.ali.ultimateweather.data.reposiroty.UltimateWeatherRepositoryImpl
 import com.ali.ultimateweather.ui.weather.current.CurrentWeatherViewModelFactory
+import com.google.android.gms.location.LocationServices
 import com.jakewharton.threetenabp.AndroidThreeTen
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -33,7 +35,10 @@ class UltimateWeatherApplication : Application(), KodeinAware {
         bind<ConnectivityInterceptor>() with singleton { ConnectivityInterceptorImpl(instance()) }
         bind() from singleton { WeatherStackApiService(instance()) }
         bind<WeatherNetworkDataSource>() with singleton { WeatherNetworkDataSourceImpl(instance()) }
-        bind<LocationProvider>() with singleton { LocationProviderImpl() }
+
+        bind() from provider { LocationServices.getFusedLocationProviderClient(instance<Context>()) }
+
+        bind<LocationProvider>() with singleton { LocationProviderImpl(instance(), instance()) }
         bind<UltimateWeatherRepository>() with singleton {
             UltimateWeatherRepositoryImpl(
                 instance(),

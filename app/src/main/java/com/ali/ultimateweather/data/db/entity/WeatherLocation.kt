@@ -27,7 +27,7 @@ data class WeatherLocation(
     @SerializedName("utc_offset")
     val utcOffset: String
 ) {
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     var id: Int = WEATHER_LOCATION_ID
 
     val zonedDateTime: ZonedDateTime
