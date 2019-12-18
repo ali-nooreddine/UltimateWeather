@@ -71,10 +71,7 @@ class UltimateWeatherRepositoryImpl(
     private fun persistFetchedCurrentWeather(fetchedWeather:CurrentWeatherResponse){
         GlobalScope.launch(Dispatchers.IO) {
             currentWeatherDao.upsert(fetchedWeather.currentWeatherEntry)
-            val location = fetchedWeather.location
-            location.id = 0
-            val id = weatherLocationDao.upsert(location)
-            print(id)
+            weatherLocationDao.upsert(fetchedWeather.location)
         }
     }
 
