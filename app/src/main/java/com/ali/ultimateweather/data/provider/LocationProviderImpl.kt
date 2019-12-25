@@ -4,8 +4,10 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationManager
 import androidx.core.content.ContextCompat
 import com.ali.ultimateweather.data.db.entity.WeatherLocation
+import com.ali.ultimateweather.internal.GpsNotEnabledException
 import com.ali.ultimateweather.internal.LocationPermissionNotGrantedException
 import com.google.android.gms.location.FusedLocationProviderClient
 import kotlinx.coroutines.Deferred
@@ -27,7 +29,6 @@ class LocationProviderImpl(
         } catch (e: LocationPermissionNotGrantedException) {
             false
         }
-
         return deviceLocationChanged || hasCustomLocationChanged(lastWeatherLocation)
 
     }
@@ -64,17 +65,34 @@ class LocationProviderImpl(
                     ?: return "${getCustomLocationName()}"
                 return "${deviceLocation.latitude},${deviceLocation.longitude}"
             } catch (e: LocationPermissionNotGrantedException) {
+
                 return "${getCustomLocationName()}"
+
+            } catch (e: GpsNotEnabledException) {
+
+                return "${getCustomLocationName()}"
+
             }
         } else
             return "${getCustomLocationName()}"
     }
 
     private fun getLastDeviceLocation(): Deferred<Location?> {
-        return if (hasLocationPermission())
-            fusedLocationProviderClient.lastLocation.asDeferred()
-        else
+        return if (hasLocationPermission()) {
+            if (gpsLocationEnabled()) {
+                fusedLocationProviderClient.lastLocation.asDeferred()
+            } else {
+                throw GpsNotEnabledException()
+            }
+        } else {
             throw LocationPermissionNotGrantedException()
+        }
+    }
+
+    private fun gpsLocationEnabled(): Boolean {
+        val locationManager: LocationManager =
+            appContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
     private fun hasLocationPermission(): Boolean {

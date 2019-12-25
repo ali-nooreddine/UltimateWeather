@@ -17,14 +17,14 @@ import com.ali.ultimateweather.data.db.entity.WeatherLocation
     version = 1
 )
 @TypeConverters(PersistentConverter::class)
-abstract class WeatherDatabase:RoomDatabase() {
+abstract class WeatherDatabase : RoomDatabase() {
 
-    abstract fun currentWeatherDao():CurrentWeatherDao
-
+    abstract fun currentWeatherDao(): CurrentWeatherDao
     abstract fun weatherLocationDao(): WeatherLocationDao
 
     companion object {
-        @Volatile private var instance:WeatherDatabase?=null
+        @Volatile
+        private var instance: WeatherDatabase? = null
         // to make sure no 2 threads are doing the same things
         private val LOCK = Any()
 
@@ -33,7 +33,8 @@ abstract class WeatherDatabase:RoomDatabase() {
         }
 
         private fun buildDatabase(context: Context) =
-            Room.databaseBuilder(context.applicationContext,
+            Room.databaseBuilder(
+                context.applicationContext,
                 WeatherDatabase::class.java, "weather.db"
             )
                 .build()
